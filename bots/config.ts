@@ -1,10 +1,19 @@
 
 import * as fs from 'fs';
 
+interface BotConfig {
+    "RANDO_BOT_KEY": string
+};
+
 const targetConfigFilePath = `/home/${process.env.USER}/.creds/discord-bots-keys.json`
 if (!fs.existsSync(targetConfigFilePath)) {
-    throw `Failed to find file: ${targetConfigFilePath}`;
+    throw (
+        `Failed to find file: ${targetConfigFilePath}\n` + 
+        "This is normal if you are attempting to run immediately after cloning.\n" +
+        `Create a file: ${targetConfigFilePath}\n`
+        
+    );
 }
-const config = JSON.parse(fs.readFileSync(targetConfigFilePath).toString('utf-8'));
+const config: BotConfig = JSON.parse(fs.readFileSync(targetConfigFilePath).toString('utf-8'));
 
-export { config };
+export { config, BotConfig };
