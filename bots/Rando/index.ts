@@ -5,7 +5,7 @@ import { rollDice } from "./random_util";
 
 import { Message } from "discord.js";
 
-const ACTION_PREFIX_REGEX = /[^\n\r]rando[ $]/g; 
+const ACTION_PREFIX_REGEX = /^rando( |$)/; 
 
 const RESPONSE_HELP = (
     "Hi I'm Rando! I facilitate the heartless tyranny of random chance!\n" +
@@ -13,7 +13,8 @@ const RESPONSE_HELP = (
     "   help - show this message\n" +
     "   <number> - Returns a random number between 1 and <number>\n" +
     "   <number1>,<number2> - Returns a random number between <number1> and <number2>\n" +
-    "   spin - Spin a standard roulette wheel"
+    "   lucky <number> - You have a 1 in <number> chance of being a winner\n" +
+    "   spin - [TODO] Spin a standard roulette wheel"
 );
 
 export class RandoBot extends BotBase {
@@ -39,9 +40,10 @@ export class RandoBot extends BotBase {
 
     receive_incoming_message(message: Message) {
         if (message.author.bot) { return; }
-        if (message.content.match(ACTION_PREFIX_REGEX)) { return; }
+        const message_content = message.content;
+        if (!message_content.match(ACTION_PREFIX_REGEX)) { return; }
 
-        const parts: string[] = message.content.split(/\s+/);
+        const parts: string[] = message_content.split(/\s+/);
         if (parts.length < 1) {
             console.warn("Message with an empty body?");
             return;
