@@ -1,11 +1,11 @@
 import { config } from "../config";
 import { BotBase } from "../BotBase";
-import { asNumberPairOrNull } from "./util";
+import { asNumberPairOrNull } from "../util";
+import { rollDice } from "./random_util";
 
 import { Message } from "discord.js";
-import { fileURLToPath } from "url";
 
-const ACTION_PREFIX = "rando ";
+const ACTION_PREFIX_REGEX = /[^\n\r]rando[ $]/g; 
 
 const RESPONSE_HELP = (
     "Hi I'm Rando! I facilitate the heartless tyranny of random chance!\n" +
@@ -25,7 +25,7 @@ export class RandoBot extends BotBase {
 
     async init() {
         // Bind actions
-        this._client.on("message", this.on_incoming_message);
+        this._client.on("message", this.receive_incoming_message);
 
         // Grab token
         const BOT_TOKEN: string = config.RANDO_BOT_KEY;
@@ -37,9 +37,9 @@ export class RandoBot extends BotBase {
         this._client.login(BOT_TOKEN); // ORPHAN PROMISE
     }
 
-    on_incoming_message(message: Message) {
+    receive_incoming_message(message: Message) {
         if (message.author.bot) { return; }
-        if (!message.content.startsWith(ACTION_PREFIX)) { return; }
+        if (message.content.match(ACTION_PREFIX_REGEX)) { return; }
 
         const parts: string[] = message.content.split(/\s+/);
         if (parts.length < 1) {
@@ -50,6 +50,11 @@ export class RandoBot extends BotBase {
 
         console.log(`Reading a message from ${message.author.username}...`);
 
+        if (parts.length < 1) {
+            console.log("Message without any arguments, responding with help.");
+            message.reply(RESPONSE_HELP);
+            return;
+        }
         const first_part: string = parts.shift();
 
         // Handle numbers
@@ -65,60 +70,49 @@ export class RandoBot extends BotBase {
                 min_random = 1;
             }
 
-            // Point out problems
-            if (min_random > max_random) {
-                message.reply(`First numberm must be smaller than the second number.`); // ORPHAN PROMISE
-                return;
-            }
-            const total_odds = (max_random - min_random) + 1;
-            if (total_odds <= 0) {
-                message.reply(`First number should be the smaller number.`); // ORPHAN PROMISE
-                return;
-            }
-
-            // Determine answer
-            const answer = min_random + Math.floor(total_odds * Math.random());
-
-            // Respond
-            message.reply(`A roll between ${min_random} and ${max_random} gives...\n${answer}`); // ORPHAN PROMISE
+            on_said_numbers(message, min_random, max_random);
             return;
         }
 
         console.log("Parsing inner parts of the request...");
 
         const first_part_lower: string = first_part.toLowerCase();
-        switch(first_part_lower) {
+        switch (first_part_lower) {
 
             case "hello": {
                 console.log("Saying hello");
                 on_said_hello(message);
             }
-            break;
+                break;
 
             case "help":
             case "--help": {
                 console.log("Needs help");
                 on_said_help(message);
             }
-            break;
+                break;
 
             case "spin": {
                 console.log("Spinning the wheel");
-                on_said_spin(message);
+                on_said_spin(message, parts);
             }
-            break;
+                break;
+
+            case "lucky": {
+                console.log("Lucky roll");
+                on_said_lucky(message, parts);
+            }
+                break;
 
             default: {
                 console.log("Invalid input");
                 message.reply(`What do you mean by '${first_part_lower}'? (first)`); // ORPHAN PROMISE
             }
-            break;
+                break;
         }
 
         //console.log(message);
     }
-
-
 };
 
 function on_said_hello(message: Message) {
@@ -129,6 +123,45 @@ function on_said_help(message: Message) {
     message.reply(RESPONSE_HELP); // ORPHAN PROMISE
 }
 
-function on_said_spin(message: Message) {
-    message.reply(`I'm sorry '${message.author.username}, my creator is lazy and hasn't implemented that yet.`); // ORPHAN PROMISE
+function on_said_spin(message: Message, parts: string[]) {
+    message.reply(`I'm sorry '${message.author.username}, my creator is lazy and hasn't implemented that yet. Args: ${parts.toString()}`); // ORPHAN PROMISE
+}
+
+function on_said_numbers(message: Message, min_random: number, max_random: number) {
+
+    // Determine odds
+    const total_odds = (max_random - min_random) + 1;
+    if (total_odds <= 1) {
+        message.reply("Error: Number should be positive and the first number should be smaller than the second.");
+        return;
+    }
+
+    // Determine answer
+    const answer = rollDice(min_random, max_random);
+
+    // Respond
+    message.reply(`A roll between ${min_random} and ${max_random} gives...\n${answer}`); // ORPHAN PROMISE
+}
+
+function on_said_lucky(message: Message, parts: string[]) {
+    if (parts.length < 1) {
+        message.reply("Error: Include a number for the odds.");
+    }
+    const lucky_number = Math.round(parseFloat(parts[0])) || null;
+    if (lucky_number === null) {
+        message.reply("Error: Lucky number provided is not a number.");
+        return;
+    }
+    if (lucky_number <= 1) {
+        message.reply("Error: Lucky number should be larger than 1.");
+        return;
+    }
+
+    let response = `Roll with a 1 in ${lucky_number} chance...`;
+    const roll_result = rollDice(1, lucky_number);
+    if (roll_result == 1) {
+        message.reply(response + "\nWinner!");
+    } else {
+        message.reply(response + "\nSorry, not your lucky day.");
+    }
 }

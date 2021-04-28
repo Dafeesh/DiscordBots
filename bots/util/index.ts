@@ -11,4 +11,4 @@ export function asNumberPairOrNull(maybe_number: string): number[] {
         return null;
     }
     return [number1, number2];
-}
+};
