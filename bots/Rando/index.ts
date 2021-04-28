@@ -108,7 +108,7 @@ export class RandoBot extends BotBase {
 
             default: {
                 console.log("Invalid input");
-                message.reply(`What do you mean by '${first_part_lower}'? (first)`); // ORPHAN PROMISE
+                message.reply(`What do you mean by '${first_part_lower}'? (first)`);
             }
                 break;
         }
@@ -118,15 +118,15 @@ export class RandoBot extends BotBase {
 };
 
 function on_said_hello(message: Message) {
-    message.reply(`Hello there ${message.author.username} <stares menacingly>`); // ORPHAN PROMISE
+    message.reply(`Hello there ${message.author.username} <stares menacingly>`);
 }
 
 function on_said_help(message: Message) {
-    message.reply(RESPONSE_HELP); // ORPHAN PROMISE
+    message.reply(RESPONSE_HELP);
 }
 
 function on_said_spin(message: Message, parts: string[]) {
-    message.reply(`I'm sorry '${message.author.username}, my creator is lazy and hasn't implemented that yet. Args: ${parts.toString()}`); // ORPHAN PROMISE
+    message.reply(`I'm sorry '${message.author.username}, my creator is lazy and hasn't implemented that yet. Args: ${parts.toString()}`);
 }
 
 function on_said_numbers(message: Message, min_random: number, max_random: number) {
@@ -142,7 +142,7 @@ function on_said_numbers(message: Message, min_random: number, max_random: numbe
     const answer = rollDice(min_random, max_random);
 
     // Respond
-    message.reply(`A roll between ${min_random} and ${max_random} gives...\n${answer}`); // ORPHAN PROMISE
+    message.reply(`A roll between ${min_random} and ${max_random} gives...\n${answer}`);
 }
 
 function on_said_lucky(message: Message, parts: string[]) {
@@ -160,7 +160,7 @@ function on_said_lucky(message: Message, parts: string[]) {
         return;
     }
 
-    // Calculate roll and return result
+    // Calculate roll and return
     let response = `Roll with 1 in ${lucky_number} (${Math.round(100 * (1.0 / lucky_number))}%) chance...`;
     const roll_result = rollDice(1, lucky_number);
     if (roll_result == 1) {
