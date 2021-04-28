@@ -146,6 +146,7 @@ function on_said_numbers(message: Message, min_random: number, max_random: numbe
 }
 
 function on_said_lucky(message: Message, parts: string[]) {
+    // Determine if any user supplied errors
     if (parts.length < 1) {
         message.reply("Error: Include a number for the odds.");
     }
@@ -159,7 +160,8 @@ function on_said_lucky(message: Message, parts: string[]) {
         return;
     }
 
-    let response = `Roll with a 1 in ${lucky_number} chance...`;
+    // Calculate roll and return result
+    let response = `Roll with 1 in ${lucky_number} (${Math.round(100 * (1.0 / lucky_number))}%) chance...`;
     const roll_result = rollDice(1, lucky_number);
     if (roll_result == 1) {
         message.reply(response + "\nWinner!");
