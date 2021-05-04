@@ -1,5 +1,7 @@
 {
   "name": "discord-bots",
+  "author": "Blake Scherschel",
+  "license": "ISC",
   "version": "1.0.0",
   "description": "",
   "main": "bots",
@@ -12,8 +14,6 @@
     "build": "npm run compile-ts && pkg -t node10-linux-x64 .",
     "test": "echo \"Error: no test specified\""
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "discord.js": "^12.5.3",
     "sqlite3": "^5.0.2",
@@ -26,14 +26,14 @@
     "ts-node": "^9.1.1",
     "typescript": "^4.2.4"
   },
+  "type": "commonjs",
+  "module": "esnext",
+  "target": "es2017",
   "pkg": {
     "scripts": "build/**/*.js",
     "targets": [
       "node14-linux-arm64"
     ],
     "outputPath": "build"
-  },
-  "type": "commonjs",
-  "module": "esnext",
-  "target": "es2017"
+  }
 }
