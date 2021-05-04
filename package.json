@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "bots",
+  "bin": "./build/tsc.js",
   "scripts": {
     "start": "ts-node ./bots/index.ts",
+    "compile-ts": "tsc",
+    "build": "npm run compile-ts && pkg -t node10-linux-x64 .",
     "test": "echo \"Error: no test specified\""
   },
   "author": "",
@@ -15,8 +18,17 @@
   },
   "devDependencies": {
     "@types/node": "^14.14.41",
+    "@types/ws": "^7.4.2",
+    "pkg": "^5.1.0",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.4"
+  },
+  "pkg": {
+    "scripts": "build/**/*.js",
+    "targets": [
+      "node14-linux-arm64"
+    ],
+    "outputPath": "build"
   },
   "type": "module",
   "module": "esnext",

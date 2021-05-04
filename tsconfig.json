@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "module": "system",
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "outFile": "build/tsc.js",
+        "sourceMap": true,
+        "moduleResolution": "node"
+    },
+    "include": [
+        "bots/**/*"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
