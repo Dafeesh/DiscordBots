@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "bots",
-  "bin": "./build/tsc.js",
+  "bin": {
+    "discord-bots": "./build/index.js"
+  },
   "scripts": {
     "start": "ts-node ./bots/index.ts",
     "compile-ts": "tsc",
@@ -14,7 +16,8 @@
   "license": "ISC",
   "dependencies": {
     "discord.js": "^12.5.3",
-    "sqlite3": "^5.0.2"
+    "sqlite3": "^5.0.2",
+    "systemjs": "^6.8.3"
   },
   "devDependencies": {
     "@types/node": "^14.14.41",
@@ -30,7 +33,7 @@
     ],
     "outputPath": "build"
   },
-  "type": "module",
+  "type": "commonjs",
   "module": "esnext",
   "target": "es2017"
 }
